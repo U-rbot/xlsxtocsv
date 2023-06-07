@@ -1,0 +1,40 @@
+Sub ConvertExcelToCSV()
+    Dim FolderPath As String
+    Dim Filename As String
+    Dim wb As Workbook
+    Dim fso As Object
+    
+    ' Update the folder path to match your specific folder location
+    FolderPath = "C:\Your\Folder\Path\"
+    
+    ' Disable screen updating to improve performance
+    Application.ScreenUpdating = False
+    
+    ' Create a FileSystemObject
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    
+    ' Loop through each file in the folder
+    Filename = Dir(FolderPath & "*.*")
+    Do While Filename <> ""
+        ' Check if the file is an Excel file
+        If fso.GetExtensionName(Filename) Like "xls*" Then
+            ' Open the Excel file
+            Set wb = Workbooks.Open(Filename:=FolderPath & Filename)
+            
+            ' Save the file in CSV format with the same name
+            wb.SaveAs Filename:=FolderPath & fso.GetBaseName(Filename) & ".csv", _
+                      FileFormat:=xlCSV, CreateBackup:=False
+            
+            ' Close the Excel file
+            wb.Close SaveChanges:=False
+        End If
+        
+        ' Move to the next file
+        Filename = Dir
+    Loop
+    
+    ' Enable screen updating
+    Application.ScreenUpdating = True
+    
+    MsgBox "Conversion complete!"
+End Sub
